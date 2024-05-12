@@ -23,10 +23,11 @@ public class TcpClientManager {
             System.out.println("You connected to server at " + address.getHostName() + ":" + address.getPort());
         } catch (IOException e) {
             System.err.println("Error while starting client : " + e.getMessage());
+            System.exit(1);
         }
     }
-    public void send(Request request) {
-        try {
+    public Request send(Request request) throws IOException, ClassNotFoundException {
+//        try {
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             ObjectOutputStream outputStream = new ObjectOutputStream(byteArrayOutputStream);
             outputStream.writeObject(request);
@@ -36,9 +37,19 @@ public class TcpClientManager {
             while (buffer.hasRemaining()) {
                 client.write(buffer);
             }
-        } catch (IOException e) {
-            System.err.println("Error while sending request :" + e.getMessage());
-        }
+            // Read the response back from the server
+            buffer.clear();
+            client.read(buffer);
+            buffer.flip();
+            ObjectInputStream inputStream = new ObjectInputStream(new ByteArrayInputStream(buffer.array(), 0, buffer.limit()));
+            Request read = (Request) inputStream.readObject();
+            return read;
+//        } catch (IOException e) {
+//            System.err.println("Error while sending request :" + e.getMessage());
+//        } catch (ClassNotFoundException e) {
+//            System.err.println("Error while reading response from server : " + e.getMessage());
+//        }
+//        return null;
     }
 
     public Request read() {
@@ -49,7 +60,7 @@ public class TcpClientManager {
                 ObjectInputStream objectOutputStream = new ObjectInputStream(new ByteArrayInputStream(buffer.array(), 0, buffer.limit()));
                 Request response = (Request) objectOutputStream.readObject();
                 buffer.clear();
-//            commandExecutor.execute(response);
+//            CommandExecutor.execute(response);
 
                 return response;
             }
