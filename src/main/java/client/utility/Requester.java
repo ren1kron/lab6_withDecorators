@@ -28,7 +28,7 @@ public class Requester {
     }
     private void executeCommand(String[] userCommand) throws IOException, ClassNotFoundException {
         Request request = new Request(userCommand[0]);
-        Request response = client.send(request);
+        Request response = client.sendRequest(request);
 //        console.println(client.read().getMessage());
         console.println(response.getMessage());
     }
