@@ -11,11 +11,13 @@ import java.net.InetSocketAddress;
 public class ClientMain {
     public static void main(String[] args) throws IOException, ClassNotFoundException {
         InetSocketAddress address = new InetSocketAddress("localhost", 8080);
-        TcpClientManager tcpClient = new TcpClientManager(address);
+//        TcpClientManager tcpClient = new TcpClientManager(address);
+        Console console = new StandardConsole();
+        TcpClientManager tcpClient = new TcpClientManager(console, address);
 
         tcpClient.start();
 
-        Console console = new StandardConsole();
+
         Requester requester = new Requester(console, tcpClient);
         requester.interactiveMode();
     }

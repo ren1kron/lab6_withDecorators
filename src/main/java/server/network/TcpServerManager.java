@@ -27,13 +27,14 @@ public class TcpServerManager {
             serverSocketChannel.configureBlocking(false);
             serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT); //
             // Есть вариация через serverSocketChannel.register(selector, ops, null). В чём разница и как лучше?
-            System.out.println("––– Server started on :" + address.getPort() + " –––");
+            System.out.println("––– Server started on port: " + address.getPort() + " –––");
             while (true) {
                 selector.select();
                 Iterator<SelectionKey> iterator = selector.selectedKeys().iterator();
                 while (iterator.hasNext()) {
                     SelectionKey key = iterator.next();
-//                    if (!key.isValid()) continue;
+                    iterator.remove();
+                    if (!key.isValid()) continue;
                     if (key.isAcceptable()) handleAccept(key);
                     else if (key.isReadable()) handleRead(key);
 
@@ -56,6 +57,8 @@ public class TcpServerManager {
     private void handleRead(SelectionKey key) {
         try {
             SocketChannel client = (SocketChannel) key.channel();
+            client.configureBlocking(false);
+
             ByteBuffer buffer = ByteBuffer.allocate(1024);
             int read = client.read(buffer);
             if (read == -1) {

@@ -10,13 +10,18 @@ import server.utility.CommandExecutor;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class ServerMain {
     private static final String ENV_KEY = "lab5";
     public static void main(String[] args) throws IOException, ClassNotFoundException {
         var console = new StandardConsole();
-//        String fileName = System.getenv(ENV_KEY);
-        String fileName = "Worker.csv";
+        String fileName = System.getenv(ENV_KEY);
+        System.out.println(fileName);
+//        String fileName = "Worker.csv";
+//        Path path = Paths.get(fileName);
+//        System.out.println(path);
         DumpManager dumpManager = new DumpManager(fileName, console);
         CollectionManager collectionManager = new CollectionManager(dumpManager);
         if (!collectionManager.init()) {
