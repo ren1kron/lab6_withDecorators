@@ -57,7 +57,6 @@ public class TcpClientManager {
         }
         // Read the response back from the server
         Request response = getAnswer();
-//        console.println(response);
         return response;
         //            buffer.clear();
 //            client.read(buffer);
