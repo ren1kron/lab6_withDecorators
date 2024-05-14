@@ -1,6 +1,9 @@
 package server.network;
 
+import general.console.Console;
 import general.network.Request;
+import server.commandRealization.interfaces.ServerCommand;
+import server.managers.CommandManager;
 import server.utility.Executor;
 
 import java.io.*;
@@ -13,11 +16,13 @@ public class TcpServerManager {
     private InetSocketAddress address;
     private Selector selector;
     private Executor executor;
+    private Console console;
 //    private Set<SocketChannel> sessions;
 
-    public TcpServerManager(InetSocketAddress address, Executor executor) {
+    public TcpServerManager(InetSocketAddress address, Executor executor, Console console) {
         this.address = address;
         this.executor = executor;
+        this.console = console;
     }
     public void start() throws IOException, ClassNotFoundException {
 //        try {
@@ -28,6 +33,27 @@ public class TcpServerManager {
             serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT); //
             // Есть вариация через serverSocketChannel.register(selector, ops, null). В чём разница и как лучше?
             System.out.println("––– Server started on port: " + address.getPort() + " –––");
+        new Thread(() -> {
+            while (true) {
+                try {
+                    CommandManager commandManager = executor.getCommandManager();
+                    String input = console.readln().trim();
+                    if (input.equals("save")) {
+                        commandManager.getCommands().get("save").apply(new Request(""));
+                    } else if (input.equals("exit")) {
+                        commandManager.getCommands().get("save").apply(new Request(""));
+                        commandManager.getCommands().get("exit").apply(new Request(""));
+                    } else {
+//                            log.warn("Внимание! Введенная вами команда отсутствует в базе сервера. Вам доступны следующие две команы : save , exit. Введите любую из них.");
+                        console.println("Inserted command is not available for server. You are able to use this commands: 'save', 'exit'");
+                    }
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }).start();
             while (true) {
                 selector.select();
                 Iterator<SelectionKey> iterator = selector.selectedKeys().iterator();
@@ -74,6 +100,12 @@ public class TcpServerManager {
             buffer.flip();
             ObjectInputStream objectInputStream = new ObjectInputStream(new ByteArrayInputStream(buffer.array()));
             Request request = (Request) objectInputStream.readObject();
+            // if command is for server only, we send back request with error
+            if (executor.getCommandManager().getCommands().get(request.getMessage()) instanceof ServerCommand) {
+//                System.out.println(execute.getMessage());
+
+                return;
+            }
             Request execute = this.executor.execute(request);
 
             // Echo the request back to client

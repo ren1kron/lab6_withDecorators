@@ -2,8 +2,8 @@ package client;
 
 import client.network.TcpClientManager;
 import client.utility.Requester;
-import client.utility.console.Console;
-import client.utility.console.StandardConsole;
+import general.console.Console;
+import general.console.StandardConsole;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;

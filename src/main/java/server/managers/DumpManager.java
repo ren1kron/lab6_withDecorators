@@ -2,7 +2,7 @@
 package server.managers;
 
 
-import client.utility.console.Console;
+import general.console.Console;
 import com.opencsv.*;
 import com.opencsv.exceptions.CsvValidationException;
 import general.models.*;
@@ -31,7 +31,7 @@ public class DumpManager {
 //    Запись данных в файл необходимо реализовать с помощью класса java.io.OutputStreamWriter
     private final static String[] strings = {"key", "id", "name", "organization", "position", "status", "salary", "coordinates", "date of appointment", "birthday"};
     private final String fileName;
-    private final client.utility.console.Console console;
+    private final Console console;
 
     // console.printError("The entered file could not be found");
 
@@ -118,7 +118,7 @@ public class DumpManager {
             try {
                 csvWriter.flush();
                 csvWriter.close();
-                console.print("Collection successfully saved in file!");
+                console.println("Collection successfully saved in file!");
             } catch (IOException e) {
                 console.printError("Unexpected error while saving file");
             }

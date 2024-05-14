@@ -1,4 +1,4 @@
-package client.utility.console;
+package general.console;
 
 import java.util.NoSuchElementException;
 import java.util.Scanner;

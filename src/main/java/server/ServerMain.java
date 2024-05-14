@@ -1,7 +1,9 @@
 package server;
 
-import client.utility.console.StandardConsole;
+import general.console.StandardConsole;
 import server.commandRealization.commands.*;
+import server.commandRealization.commands.serverOnly.ExitCommand;
+import server.commandRealization.commands.serverOnly.SaveCommand;
 import server.managers.CollectionManager;
 import server.managers.CommandManager;
 import server.managers.DumpManager;
@@ -10,8 +12,6 @@ import server.utility.CommandExecutor;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 public class ServerMain {
     private static final String ENV_KEY = "lab5";
@@ -37,9 +37,9 @@ public class ServerMain {
 //            register("update", new UpdateCommand(console,collectionManager));
 //            register("remove_key", new RemoveKeyCommand(collectionManager));
             register("clear", new ClearCommand(collectionManager));
-//            register("save", new SaveCommand(collectionManager));
+            register("save", new SaveCommand(collectionManager));
 //            register("execute_script", new ExecuteScriptCommand());
-//            register("exit", new ExitCommand());
+            register("exit", new ExitCommand(console));
 //            register("remove_lower", new RemoveLowerCommand(console, collectionManager));
 //            register("replace_if_greater", new ReplaceIfGreaterCommand(console, collectionManager));
 //            register("remove_greater_key", new RemoveGreaterKeyCommand(console, collectionManager));
@@ -53,7 +53,8 @@ public class ServerMain {
         InetSocketAddress address = new InetSocketAddress("localhost", 8080);
 
         CommandExecutor commandExecutor = new CommandExecutor(commandManager);
-        TcpServerManager tcpServer = new TcpServerManager(address, commandExecutor);
+        TcpServerManager tcpServer = new TcpServerManager(address, commandExecutor, console);
         tcpServer.start();
+//        commandExecutor.interactiveMode();
     }
 }

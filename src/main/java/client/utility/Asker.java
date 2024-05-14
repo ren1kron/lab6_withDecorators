@@ -1,7 +1,7 @@
 package client.utility;
 
 
-import client.utility.console.Console;
+import general.console.Console;
 import general.exceptions.AskExitExecption;
 //import general.models.Coordinates;
 //import general.models.Position;

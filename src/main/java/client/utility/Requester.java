@@ -1,7 +1,7 @@
 package client.utility;
 
 import client.network.TcpClientManager;
-import client.utility.console.Console;
+import general.console.Console;
 import general.exceptions.AskExitExecption;
 import general.models.Worker;
 import general.network.Request;

@@ -1,7 +1,7 @@
 package client.network;
 
 
-import client.utility.console.Console;
+import general.console.Console;
 import general.network.Request;
 
 import java.io.*;

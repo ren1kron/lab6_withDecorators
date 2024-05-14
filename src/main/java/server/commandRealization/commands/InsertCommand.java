@@ -1,7 +1,7 @@
 package server.commandRealization.commands;
 
 
-import client.utility.console.Console;
+import general.console.Console;
 import general.models.Worker;
 import general.network.Request;
 import general.network.abstractions.RequestStatus;
