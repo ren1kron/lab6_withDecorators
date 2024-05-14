@@ -1,6 +1,8 @@
 package general.network.abstractions;
 
-public enum RequestStatus {
+import java.io.Serializable;
+
+public enum RequestStatus implements Serializable {
     NORMAL,
     KEY_COMMAND,
     ELEMENT_COMMAND,

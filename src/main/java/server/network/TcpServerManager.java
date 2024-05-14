@@ -19,8 +19,8 @@ public class TcpServerManager {
         this.address = address;
         this.executor = executor;
     }
-    public void start() {
-        try {
+    public void start() throws IOException, ClassNotFoundException {
+//        try {
             this.selector = Selector.open();
             ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
             serverSocketChannel.bind(this.address);
@@ -36,13 +36,13 @@ public class TcpServerManager {
                     iterator.remove();
                     if (!key.isValid()) continue;
                     if (key.isAcceptable()) handleAccept(key);
-                    else if (key.isReadable()) handleRead(key);
-
+                    else if (key.isReadable())
+                        handleRead(key);
                 }
             }
-        } catch (IOException e) {
-            System.err.println("Error in server (while opening selector): " + e.getMessage());
-        }
+//        } catch (IOException e) {
+//            System.err.println("Error in server (while opening selector): " + e.getMessage());
+//        }
     }
     private void handleAccept(SelectionKey key) {
         try {
@@ -63,8 +63,8 @@ public class TcpServerManager {
         try {
             SocketChannel client = (SocketChannel) key.channel();
             client.configureBlocking(false);
-
-            ByteBuffer buffer = ByteBuffer.allocate(1024);
+//            ByteBuffer buffer = ByteBuffer.allocate(1024);
+            ByteBuffer buffer = ByteBuffer.allocate(2048);
             int read = client.read(buffer);
             if (read == -1) {
                 client.close();
@@ -80,14 +80,42 @@ public class TcpServerManager {
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             ObjectOutputStream outputStream = new ObjectOutputStream(byteArrayOutputStream);
             outputStream.writeObject(execute);
-            outputStream.flush();
+//            outputStream.flush();
+            outputStream.close();
             byte[] data = byteArrayOutputStream.toByteArray();
             ByteBuffer output = ByteBuffer.wrap(data);
             client.write(output);
         } catch (IOException | ClassNotFoundException e) {
             System.err.println("Error in server (while reading key): " + e.getMessage());
+//            throw new RuntimeException(e);
         }
     }
+//    private void handleRead(SelectionKey key) throws IOException, ClassNotFoundException {
+//        SocketChannel client = (SocketChannel) key.channel();
+//        client.configureBlocking(false);
+////        ByteBuffer buffer = ByteBuffer.allocate(1024);
+//        ByteBuffer buffer = ByteBuffer.allocate(2048);
+//        int read = client.read(buffer);
+//        if (read == -1) {
+//            client.close();
+//            System.out.println("Client disconnected...");
+//            return;
+//        }
+//        buffer.flip();
+//        ObjectInputStream objectInputStream = new ObjectInputStream(new ByteArrayInputStream(buffer.array()));
+//        Request request = (Request) objectInputStream.readObject();
+//        Request execute = this.executor.execute(request);
+//
+//        // Echo the request back to client
+//        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+//        ObjectOutputStream outputStream = new ObjectOutputStream(byteArrayOutputStream);
+//        outputStream.writeObject(execute);
+////            outputStream.flush();
+//        outputStream.close();
+//        byte[] data = byteArrayOutputStream.toByteArray();
+//        ByteBuffer output = ByteBuffer.wrap(data);
+//        client.write(output);
+//    }
 
 
 }

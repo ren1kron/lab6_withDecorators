@@ -1,10 +1,7 @@
 package server;
 
 import client.utility.console.StandardConsole;
-import server.commandRealization.commands.ClearCommand;
-import server.commandRealization.commands.HelpCommand;
-import server.commandRealization.commands.InfoCommand;
-import server.commandRealization.commands.InsertCommand;
+import server.commandRealization.commands.*;
 import server.managers.CollectionManager;
 import server.managers.CommandManager;
 import server.managers.DumpManager;
@@ -35,7 +32,7 @@ public class ServerMain {
         var commandManager = new CommandManager() {{
             register("help", new HelpCommand(this));
             register("info", new InfoCommand(collectionManager));
-//            register("show", new ShowCommand(collectionManager));
+            register("show", new ShowCommand(collectionManager));
             register("insert", new InsertCommand(console, collectionManager));
 //            register("update", new UpdateCommand(console,collectionManager));
 //            register("remove_key", new RemoveKeyCommand(collectionManager));
