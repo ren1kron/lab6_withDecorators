@@ -9,7 +9,6 @@ import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
-import java.util.ArrayList;
 
 public class TcpClientManager {
     private Console console;
@@ -27,8 +26,14 @@ public class TcpClientManager {
             try {
                 client = SocketChannel.open(address);
                 client.configureBlocking(false);
-                console.println("You connected to server at " + address.getHostName() + ":" + address.getPort());
+
+                console.println("You connected to server at " + address.getHostName() + ":" + address.getPort() +
+                        "\n–––    WELCOME!!!    ––– \n" +
+                        "Enter command 'help' for help");
+
+
                 connection = true;
+
             } catch (IOException e) {
 //                System.err.println("Error while starting client : " + e.getMessage());
 //                System.exit(1);
@@ -42,58 +47,59 @@ public class TcpClientManager {
         }
 
     }
-    public Request sendRequest(Request request) throws IOException, ClassNotFoundException {
-//        try {
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        ObjectOutputStream outputStream = new ObjectOutputStream(byteArrayOutputStream);
-        outputStream.writeObject(request);
+    // TODO есть идея запихнуть инициализацию стримов и буфера в старт. А потом из остальных методов их вызывать.
+    //  Может, так будет эффективнее, хз.
+    public void sendRequest(Request request) {
+        try {
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            ObjectOutputStream outputStream = new ObjectOutputStream(byteArrayOutputStream);
+            outputStream.writeObject(request);
 //            outputStream.flush();
-        outputStream.close();
-//            byte[] bytes = byteArrayOutputStream.toByteArray();
-//            ByteBuffer buffer = ByteBuffer.wrap(bytes);
-        ByteBuffer buffer = ByteBuffer.wrap(byteArrayOutputStream.toByteArray());
-        while (buffer.hasRemaining()) {
-            client.write(buffer);
-        }
-        // Read the response back from the server
-        Request response = getAnswer();
-        return response;
-        //            buffer.clear();
-//            client.read(buffer);
-//            buffer.flip();
-//            ObjectInputStream inputStream = new ObjectInputStream(new ByteArrayInputStream(buffer.array(), 0, buffer.limit()));
-//            Request read = (Request) inputStream.readObject();
-//            return read;
-//        } catch (IOException e) {
-//            System.err.println("Error while sending request :" + e.getMessage());
-//        } catch (ClassNotFoundException e) {
-//            System.err.println("Error while reading response from server : " + e.getMessage());
-//        }
-//        return null;
-    }
-//    public Request getAnswer() throws InterruptedException, IOException, ClassNotFoundException {
-//        Thread.sleep(2000);
-//        ArrayList<ByteBuffer> bufferList = new ArrayList<>();
-//        for (int i = 0; i < 10; i++) {
-//            ByteBuffer buffer = ByteBuffer.allocate(1024);
-//            client.read(buffer);
-//            if (buffer.limit() == buffer.position() || bufferList.isEmpty()) {
-//                bufferList.add(buffer);
-//            } else {
-//                break;
+            outputStream.close();
+            ByteBuffer buffer = ByteBuffer.wrap(byteArrayOutputStream.toByteArray());
+            while (buffer.hasRemaining()) {
+                client.write(buffer);
+//                client.read(buffer);
+            }
+            // Read the response back from the server
+            Request response = getAnswer();
+            console.println(response.getMessage());
+        } catch (IOException e) {
+//            console.printError("Connection to the server was interrupted : " + e.getMessage());
+            console.printError("The request to the server was not sent: " + e.getMessage());
+            console.printError("Try to reconnect by writing 'reconnect' or write 'exit' " +
+                    "if you want to shut down client'");
+            // TODO далее ниже идёт не законченная костыльная реализация реконнекта. В целом, можно оставить так.
+            //  Но, возможно, добавить нормальные команды и сделать нормальную реализацию внутри executor'а будет проще
+//            console.printError("We will try to reconnect...");
+//            while (true) {
+//                String input = console.readln().trim();
+//                input.split()
+//                if (input.equals())
+//                try {
+//                    if (client != null && client.isOpen()) {
+//                        client.close();  // Закрываем предыдущий канал, если он открыт
+//                    }
+//                    client = SocketChannel.open();
+//                    client.connect(address);
+//                    client.configureBlocking(false);
+////                console.println("Успешное подключение к серверу.");
+//                    console.println("You reconnected to the server.");
+//                } catch (IOException ex) {
+//                    console.printError("Server still isn't working.");
+//                    // В этом месте можно добавить задержку перед следующей попыткой переподключения, если нужно
+//                    try {
+//                        Thread.sleep(5000);  // Задержка в 5 секунд
+//                    } catch (InterruptedException exc) {
+////                    throw new RuntimeException(exc);
+//                        Thread.currentThread().interrupt();
+//                    }
+//                }
 //            }
-//        }
-//        ByteBuffer bigBuffer = ByteBuffer.allocate(bufferList.size() * 8192);
-//        for (ByteBuffer byteBuffer : bufferList) {
-//            bigBuffer.put(byteBuffer.array());
-//        }
-//        ByteArrayInputStream bi = new ByteArrayInputStream(bigBuffer.array());
-//        ObjectInputStream oi = new ObjectInputStream(bi);
-//
-//        return (Request) oi.readObject();
-//    }
+        }
+    }
 
-    public Request getAnswer() throws IOException {
+    private Request getAnswer() throws IOException {
         Selector selector = Selector.open();
         client.register(selector, client.validOps());
         ByteBuffer buffer = ByteBuffer.allocate(1024);
@@ -130,28 +136,11 @@ public class TcpClientManager {
                     // Error while deserializing object. Maybe, some data wasn't gotten
                     // Continue reading data...
                 } catch (ClassNotFoundException e) {
-                    System.err.println("Error while ");
+                    System.err.println("Error while reading object :" + e.getMessage());
                 }
             }
         }
         return null;
     }
 
-//    public Request read() {
-//        ByteBuffer buffer = ByteBuffer.allocate(1024);
-//        try {
-//            while (client.read(buffer) > 0) {
-//                buffer.flip();
-//                ObjectInputStream objectOutputStream = new ObjectInputStream(new ByteArrayInputStream(buffer.array(), 0, buffer.limit()));
-//                Request response = (Request) objectOutputStream.readObject();
-//                buffer.clear();
-////            CommandExecutor.execute(response);
-//
-//                return response;
-//            }
-//        } catch (IOException | ClassNotFoundException e) {
-//            System.err.println("Error while reading response from server : " + e.getMessage());
-//        }
-//        return null;
-//    }
 }

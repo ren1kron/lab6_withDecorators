@@ -49,6 +49,11 @@ public class TcpServerManager {
             ServerSocketChannel channel = (ServerSocketChannel) key.channel();
             SocketChannel client = channel.accept();
             client.configureBlocking(false);
+            // Есть идея здесь добавить отправку сервисных моментов: список команд с ключом, с элементом и пр. Но, наверное, это уже too much
+//            ByteBuffer service = ByteBuffer.allocate(1024);
+//            service.put(executor.)
+//            client.write(service);
+            //
             client.register(selector, SelectionKey.OP_READ);
         } catch (IOException e) {
             throw new RuntimeException(e);
