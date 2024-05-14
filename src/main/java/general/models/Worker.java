@@ -93,8 +93,11 @@ public class Worker extends Element implements Validatable, Serializable {
 //    }
     @Override
     public boolean validate() {
-        if (key <= 0) return false;
         if (id <= 0) return false;
+        return validateWithoutId();
+    }
+    public boolean validateWithoutId() {
+        if (key <= 0) return false;
         if (name==null || name.isEmpty()) return false;
         if (coordinates == null) return false;
         if (creationDate == null) return false;

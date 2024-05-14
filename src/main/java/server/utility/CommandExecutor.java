@@ -14,6 +14,7 @@ public class CommandExecutor implements Executor{
     @Override
     public Request execute(Request request) {
         Command command = commandManager.getCommands().get(request.getMessage());
+
         if (command == null) return new Request("Inserted command is not exist or you do not have permission to use it");
         return command.apply(request);
     }

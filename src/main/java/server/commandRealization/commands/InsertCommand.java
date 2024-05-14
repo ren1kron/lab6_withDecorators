@@ -36,10 +36,13 @@ public class InsertCommand extends Command {
         int key = request.getKey();
         if (collectionManager.byKey(key) != null) return new Request("Worker with specified key already exist!");
         Worker worker = (Worker) request.getElement();
-
-        if (worker != null && worker.validate()) {
+//        if (worker != null) worker.setId(collectionManager.getFreeId());
+        worker.setId(collectionManager.getFreeId());
+        if (!worker.validate()) return new Request("Fields of inserted worker are invalid. Worker wasn't added to collection");
+//        if (worker != null && worker.validate()) {
+        else {
             collectionManager.add(worker);
             return new Request("Worker was successfully added to collection!");
-        } else return new Request("Fields of inserted worker are invalid. Worker wasn't added to collection");
+        }
     }
 }
