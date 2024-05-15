@@ -15,7 +15,9 @@ import server.managers.CollectionManager;
 public class SaveCommand extends Command implements ServerCommand {
     private final CollectionManager collectionManager;
     public SaveCommand(CollectionManager collectionManager) {
-        super("save", "Saves collection to file");
+        // TODO кринжуха – я просто делаю записи пустыми. Надо придумать, как это исправить
+//        super("save", "Saves collection to file");
+        super("", "");
         this.collectionManager = collectionManager;
     }
 

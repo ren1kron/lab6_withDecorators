@@ -41,7 +41,7 @@ public class TcpServerManager {
                     if (input.equals("save")) {
                         commandManager.getCommands().get("save").apply(new Request(""));
                     } else if (input.equals("exit")) {
-                        commandManager.getCommands().get("save").apply(new Request(""));
+//                        commandManager.getCommands().get("save").apply(new Request(""));
                         commandManager.getCommands().get("exit").apply(new Request(""));
                     } else {
 //                            log.warn("Внимание! Введенная вами команда отсутствует в базе сервера. Вам доступны следующие две команы : save , exit. Введите любую из них.");

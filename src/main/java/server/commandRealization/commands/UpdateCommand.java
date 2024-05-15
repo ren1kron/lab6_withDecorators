@@ -9,15 +9,14 @@ import server.commandRealization.Command;
 import server.managers.CollectionManager;
 
 /**
- * Command 'insert'. Adds to collection new worker with inserted key
+ * Command 'update id {element}'. This command updates element with inserted id
  * @author ren1kron
  */
-public class InsertCommand extends Command {
+public class UpdateCommand extends Command {
     private final Console console;
     private final CollectionManager collectionManager;
-
-    public InsertCommand(Console console, CollectionManager collectionManager) {
-        super("insert key {element}", "Adds new element with specified key in collection");
+    public UpdateCommand(Console console, CollectionManager collectionManager) {
+        super("update id {element}", "Update element of collection with inserted id");
         this.console = console;
         this.collectionManager = collectionManager;
     }
@@ -27,22 +26,23 @@ public class InsertCommand extends Command {
      * @param request Arguments for applying command
      * @return Command status
      */
-
     @Override
     public Request apply(Request request) {
         if (!request.getStatus().equals(RequestStatus.KEY_ELEMENT_COMMAND))
             return new Request("Wrong amount of arguments!\nYou suppose to write: '" + getName() + "'");
 
-        int key = request.getKey();
-        if (collectionManager.byKey(key) != null) return new Request("Worker with specified key already exist!");
+
+        int id = request.getKey();
+
+        var oldWorker = collectionManager.byId(id);
+        if (oldWorker == null || !collectionManager.isContain(oldWorker)) return new Request("Worker with the specified ID does not exist!");
+        var key = oldWorker.getKey();
         Worker worker = (Worker) request.getElement();
-//        if (worker != null) worker.setId(collectionManager.getFreeId());
-        worker.setId(collectionManager.getFreeId());
-        if (!worker.validate()) return new Request("Fields of inserted worker are invalid. Worker wasn't added to collection");
-//        if (worker != null && worker.validate()) {
-        else {
+
+        if (worker != null && worker.validate()) {
+            collectionManager.removeByKey(key);
             collectionManager.add(worker);
-            return new Request("Worker was successfully added to collection!");
-        }
+            return new Request("Worker with inserted id was successfully updated!");
+        } else return new Request("Fields of inserted old Worker are invalid. Worker wasn't updated!");
     }
 }

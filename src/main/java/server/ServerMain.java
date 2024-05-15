@@ -34,18 +34,18 @@ public class ServerMain {
             register("info", new InfoCommand(collectionManager));
             register("show", new ShowCommand(collectionManager));
             register("insert", new InsertCommand(console, collectionManager));
-//            register("update", new UpdateCommand(console,collectionManager));
-//            register("remove_key", new RemoveKeyCommand(collectionManager));
+            register("update", new UpdateCommand(console,collectionManager));
+            register("remove_key", new RemoveKeyCommand(collectionManager));
             register("clear", new ClearCommand(collectionManager));
             register("save", new SaveCommand(collectionManager));
 //            register("execute_script", new ExecuteScriptCommand());
             register("exit", new ExitCommand(console));
-//            register("remove_lower", new RemoveLowerCommand(console, collectionManager));
-//            register("replace_if_greater", new ReplaceIfGreaterCommand(console, collectionManager));
-//            register("remove_greater_key", new RemoveGreaterKeyCommand(console, collectionManager));
-//            register("group_counting_by_creation_date", new GroupCountingByCreationDateCommand(collectionManager));
-//            register("filter_by_position", new FilterByPosition(console, collectionManager));
-//            register("print_field_descending_salary", new PrintFieldDescendingSalaryCommand(collectionManager));
+            register("remove_lower", new RemoveLowerCommand(console, collectionManager));
+            register("replace_if_greater", new ReplaceIfGreaterCommand(console, collectionManager));
+            register("remove_greater_key", new RemoveGreaterKeyCommand(console, collectionManager));
+            register("group_counting_by_creation_date", new GroupCountingByCreationDateCommand(collectionManager));
+            register("filter_by_position", new FilterByPosition(console, collectionManager));
+            register("print_field_descending_salary", new PrintFieldDescendingSalaryCommand(collectionManager));
         }};
 //         TODO сделать два класса, которые как-то с собой взаимодействуют.
 //          один из них – подготавливает данные, а другой – их от него получает (пока без сети)
