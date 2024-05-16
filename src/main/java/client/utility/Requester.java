@@ -149,7 +149,7 @@ public class Requester {
 //                commandStatus = needLaunch ? executeCommand(userCommand) : new Request("Recursion detected");
                 executeCommand(userCommand);
             } while(!userCommand[0].equals("exit") && console.isCanReadln());
-
+            console.selectConsoleScanner();
         } catch (FileNotFoundException e) {
 //            return new Request("Script file was not found!");
             console.printError("Script file was not found!");
