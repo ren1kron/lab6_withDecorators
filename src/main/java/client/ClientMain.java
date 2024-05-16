@@ -10,7 +10,7 @@ import java.net.InetSocketAddress;
 
 public class ClientMain {
     public static void main(String[] args) throws IOException, ClassNotFoundException {
-        InetSocketAddress address = new InetSocketAddress("localhost", 8080);
+        InetSocketAddress address = new InetSocketAddress("localhost", 2612);
 //        TcpClientManager tcpClient = new TcpClientManager(address);
         Console console = new StandardConsole();
         TcpClientManager tcpClient = new TcpClientManager(console, address);

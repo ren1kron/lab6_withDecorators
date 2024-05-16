@@ -50,7 +50,7 @@ public class ServerMain {
 //         TODO сделать два класса, которые как-то с собой взаимодействуют.
 //          один из них – подготавливает данные, а другой – их от него получает (пока без сети)
 //          затем сделать простую программу, которая обменивается инфой по сети
-        InetSocketAddress address = new InetSocketAddress("localhost", 8080);
+        InetSocketAddress address = new InetSocketAddress("localhost", 2612);
 
         CommandExecutor commandExecutor = new CommandExecutor(commandManager);
         TcpServerManager tcpServer = new TcpServerManager(address, commandExecutor, console);

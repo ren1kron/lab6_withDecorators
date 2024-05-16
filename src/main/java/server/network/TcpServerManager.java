@@ -24,8 +24,8 @@ public class TcpServerManager {
         this.executor = executor;
         this.console = console;
     }
-    public void start() throws IOException, ClassNotFoundException {
-//        try {
+    public void start() {
+        try {
             this.selector = Selector.open();
             ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
             serverSocketChannel.bind(this.address);
@@ -66,9 +66,9 @@ public class TcpServerManager {
                         handleRead(key);
                 }
             }
-//        } catch (IOException e) {
-//            System.err.println("Error in server (while opening selector): " + e.getMessage());
-//        }
+        } catch (IOException e) {
+            System.err.println("Error in server (while opening selector): " + e.getMessage());
+        }
     }
     private void handleAccept(SelectionKey key) {
         try {
