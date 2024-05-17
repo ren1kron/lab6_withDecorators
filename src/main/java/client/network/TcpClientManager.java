@@ -65,49 +65,53 @@ public class TcpClientManager {
             Request response = getAnswer();
             console.println(response.getMessage());
         } catch (IOException e) {
-//            console.printError("Unable to connect to server. We will try to reconnect in 5 seconds...");
-//            try {
-//                Thread.sleep(5000);
+            console.printError("Unable to connect to server. We will try to reconnect in 5 seconds...");
+            try {
+                Thread.sleep(5000);
+                start();
 //                console.println("Try again");
-//            } catch (InterruptedException ex) {
-//                Thread.currentThread().interrupt();
-//            }
-            console.printError("Connection to the server was interrupted : " + e.getMessage());
-//            console.printError("The request to the server was not sent: " + e.getMessage());
-            console.printError("Try to reconnect by writing 'reconnect' or write 'exit' " +
-                    "if you want to shut down client'");
-//            // TODO далее ниже идёт не законченная костыльная реализация реконнекта. В целом, можно оставить так.
-//            //  Но, возможно, добавить нормальные команды и сделать нормальную реализацию внутри executor'а будет проще
-////            console.printError("We will try to reconnect...");
-            while (true) {
-                console.prompt();
-                String input = console.readln().trim();
-//                input.split()
-                if (input.equals("reconnect")) {
-                    try {
-                        if (client != null && client.isOpen()) {
-                            client.close();  // Закрываем предыдущий канал, если он открыт
-                        }
-                        client = SocketChannel.open();
-                        client.connect(address);
-                        client.configureBlocking(false);
-//                console.println("Успешное подключение к серверу.");
-                        console.println("You reconnected to the server.");
-                    } catch (IOException ex) {
-                        console.printError("Server still isn't working.");
-                        // В этом месте можно добавить задержку перед следующей попыткой переподключения, если нужно
-                        try {
-                            Thread.sleep(5000);  // Задержка в 5 секунд
-                        } catch (InterruptedException exc) {
-//                    throw new RuntimeException(exc);
-                            Thread.currentThread().interrupt();
-                        }
-                    }
-                } if (input.equals("exit")) {
-                    console.println("Client disconnects...");
-                    System.exit(1);
-                }
+//                console.println("Connection restored!");
+                sendRequest(request);
+            } catch (InterruptedException ex) {
+                Thread.currentThread().interrupt();
             }
+//            console.printError("Connection to the server was interrupted : " + e.getMessage());
+////            console.printError("The request to the server was not sent: " + e.getMessage());
+////            console.printError("Try to reconnect by writing 'reconnect' or write 'exit' " +
+////                    "if you want to shut down client'");
+////            // TODO далее ниже идёт не законченная костыльная реализация реконнекта. В целом, можно оставить так.
+////            //  Но, возможно, добавить нормальные команды и сделать нормальную реализацию внутри executor'а будет проще
+//////            console.printError("We will try to reconnect...");
+//            while (true) {
+//                console.prompt();
+//                String input = console.readln().trim();
+////                input.split()
+//                if (input.equals("exit")) {
+//                    console.println("Client disconnects...");
+//                    System.exit(1);
+//                }
+//                if (input.equals("reconnect")) {
+//                    try {
+//                        if (client != null && client.isOpen()) {
+//                            client.close();  // Закрываем предыдущий канал, если он открыт
+//                        }
+//                        client = SocketChannel.open();
+//                        client.connect(address);
+//                        client.configureBlocking(false);
+////                console.println("Успешное подключение к серверу.");
+//                        console.println("You reconnected to the server.");
+//                    } catch (IOException ex) {
+//                        console.printError("Server still isn't working.");
+//                        // В этом месте можно добавить задержку перед следующей попыткой переподключения, если нужно
+//                        try {
+//                            Thread.sleep(5000);  // Задержка в 5 секунд
+//                        } catch (InterruptedException exc) {
+////                    throw new RuntimeException(exc);
+//                            Thread.currentThread().interrupt();
+//                        }
+//                    }
+//                }
+//            }
         }
     }
 

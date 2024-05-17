@@ -2,17 +2,21 @@ package server.network;
 
 import general.console.Console;
 import general.network.Request;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import server.commandRealization.interfaces.ServerCommand;
 import server.managers.CommandManager;
 import server.utility.Executor;
 
 import java.io.*;
 import java.net.InetSocketAddress;
+//import java.net.SocketException;
 import java.nio.ByteBuffer;
 import java.nio.channels.*;
 import java.util.Iterator;
 
 public class TcpServerManager {
+    private static final Logger logger = LogManager.getLogger();
     private InetSocketAddress address;
     private Selector selector;
     private Executor executor;
@@ -32,28 +36,29 @@ public class TcpServerManager {
             serverSocketChannel.configureBlocking(false);
             serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT); //
             // Есть вариация через serverSocketChannel.register(selector, ops, null). В чём разница и как лучше?
-            System.out.println("––– Server started on port: " + address.getPort() + " –––");
-        new Thread(() -> {
-            while (true) {
-                try {
-                    CommandManager commandManager = executor.getCommandManager();
-                    String input = console.readln().trim();
-                    if (input.equals("save")) {
-                        commandManager.getCommands().get("save").apply(new Request(""));
-                    } else if (input.equals("exit")) {
-//                        commandManager.getCommands().get("save").apply(new Request(""));
-                        commandManager.getCommands().get("exit").apply(new Request(""));
-                    } else {
-//                            log.warn("Внимание! Введенная вами команда отсутствует в базе сервера. Вам доступны следующие две команы : save , exit. Введите любую из них.");
-                        console.println("Inserted command is not available for server. You are able to use this commands: 'save', 'exit'");
+//            System.out.println("––– Server started on port: " + address.getPort() + " –––");
+            logger.info("––– Server started on port: " + address.getPort() + " –––");
+            new Thread(() -> {
+                while (true) {
+                    try {
+                        CommandManager commandManager = executor.getCommandManager();
+                        String input = console.readln().trim();
+                        if (input.equals("save")) {
+                            commandManager.getCommands().get("save").apply(new Request(""));
+                        } else if (input.equals("exit")) {
+    //                        commandManager.getCommands().get("save").apply(new Request(""));
+                            commandManager.getCommands().get("exit").apply(new Request(""));
+                        } else {
+                            logger.warn("Inserted command is not available for server. You are able to use this commands: 'save', 'exit'");
+//                            console.println("Inserted command is not available for server. You are able to use this commands: 'save', 'exit'");
+                        }
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
                     }
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
                 }
-            }
-        }).start();
+            }).start();
             while (true) {
                 selector.select();
                 Iterator<SelectionKey> iterator = selector.selectedKeys().iterator();
@@ -67,7 +72,8 @@ public class TcpServerManager {
                 }
             }
         } catch (IOException e) {
-            System.err.println("Error in server (while opening selector): " + e.getMessage());
+//            System.err.println("Error in server (while opening selector): " + e.getMessage());
+            logger.error("Error in server (while opening selector): " + e.getMessage());
         }
     }
     private void handleAccept(SelectionKey key) {
@@ -81,8 +87,9 @@ public class TcpServerManager {
 //            client.write(service);
             //
             client.register(selector, SelectionKey.OP_READ);
+            logger.info("New client connected:" + client.socket().getRemoteSocketAddress().toString() + "\n");
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            logger.error("Error in server while accepting client : " + e.getMessage());
         }
     }
     private void handleRead(SelectionKey key) {
@@ -94,19 +101,20 @@ public class TcpServerManager {
             int read = client.read(buffer);
             if (read == -1) {
                 client.close();
-                System.out.println("Client disconnected...");
+//                System.out.println("Client disconnected...");
+                logger.info("Client " + client.socket().getRemoteSocketAddress() + " disconnected...");
+//                key.cancel();
                 return;
             }
             buffer.flip();
             ObjectInputStream objectInputStream = new ObjectInputStream(new ByteArrayInputStream(buffer.array()));
             Request request = (Request) objectInputStream.readObject();
+            Request execute;
             // if command is for server only, we send back request with error
             if (executor.getCommandManager().getCommands().get(request.getMessage()) instanceof ServerCommand) {
 //                System.out.println(execute.getMessage());
-
-                return;
-            }
-            Request execute = this.executor.execute(request);
+                execute = new Request("You don't have permissions to use this command.");
+            } else execute = this.executor.execute(request);
 
             // Echo the request back to client
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
@@ -118,7 +126,9 @@ public class TcpServerManager {
             ByteBuffer output = ByteBuffer.wrap(data);
             client.write(output);
         } catch (IOException | ClassNotFoundException e) {
-            System.err.println("Error in server (while reading key): " + e.getMessage());
+//            System.err.println("Error in server (while reading key): " + e.getMessage());
+            logger.error("Error in server (while reading key): " + e.getMessage());
+//            logger.info("Client " + " unexpectedly disconnect");
 //            throw new RuntimeException(e);
         }
     }
