@@ -191,4 +191,10 @@ public class CollectionManager {
         }
         return info.toString().trim();
     }
+
+//    public void test() {
+//        for(Worker worker : new CollectionManager(null)) {
+//
+//        }
+//    }
 }

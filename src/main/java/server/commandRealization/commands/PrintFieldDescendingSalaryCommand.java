@@ -7,6 +7,7 @@ import server.commandRealization.Command;
 import server.managers.CollectionManager;
 
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Command 'print_field_descending_salary'. Displays salary values of all elements in descending order
@@ -29,12 +30,15 @@ public class PrintFieldDescendingSalaryCommand extends Command {
             return new Request("Wrong amount of arguments!\nYou suppose to write: '" + getName() + "'");
 
 //        var stringBuilder = new StringBuilder("* Salaries of workers in descending order:\n");
-        var stringBuilder = new StringBuilder("* Salaries of workers in descending order: ");
-        collectionManager.getKeyMap().entrySet().stream()
+//        var stringBuilder = new StringBuilder("* Salaries of workers in descending order: ");
+        var result = collectionManager.getKeyMap().entrySet().stream()
                 .sorted(Map.Entry.comparingByValue((w1, w2) -> Float.compare(w2.getSalary(), w1.getSalary())))
-                .forEach(entry -> stringBuilder.append(entry.getValue().getSalary())
-//                        .append("\n"));
-                        .append("; "));
-        return new Request(stringBuilder.toString());
+//                .forEach(entry -> stringBuilder.append(entry.getValue().getSalary())
+////                        .append("\n"));
+//                        .append("; "));
+                .map(entry -> String.valueOf(entry.getValue().getSalary()))
+                .collect(Collectors.joining("; ", "* Salaries of workers in descending order: ", ""));
+//        return new Request(.toString());
+        return new Request(result);
     }
 }
