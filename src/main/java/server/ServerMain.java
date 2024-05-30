@@ -55,6 +55,6 @@ public class ServerMain {
         CommandExecutor commandExecutor = new CommandExecutor(commandManager);
         TcpServerManager tcpServer = new TcpServerManager(address, commandExecutor, console);
         tcpServer.start();
-//        commandExecutor.interactiveMode();
+//        CollectionManager.test(collectionManager);
     }
 }

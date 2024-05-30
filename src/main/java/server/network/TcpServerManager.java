@@ -1,7 +1,7 @@
 package server.network;
 
 import general.console.Console;
-import general.network.Request;
+import general.network.depricated.Request;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import server.commandRealization.interfaces.ServerCommand;
@@ -38,39 +38,69 @@ public class TcpServerManager {
             // Есть вариация через serverSocketChannel.register(selector, ops, null). В чём разница и как лучше?
 //            System.out.println("––– Server started on port: " + address.getPort() + " –––");
             logger.info("––– Server started on port: " + address.getPort() + " –––");
-            new Thread(() -> {
-                while (true) {
-                    try {
-                        CommandManager commandManager = executor.getCommandManager();
-                        String input = console.readln().trim();
-                        if (input.equals("save")) {
-                            commandManager.getCommands().get("save").apply(new Request(""));
-                        } else if (input.equals("exit")) {
-    //                        commandManager.getCommands().get("save").apply(new Request(""));
-                            commandManager.getCommands().get("exit").apply(new Request(""));
-                        } else {
-                            logger.warn("Inserted command is not available for server. You are able to use this commands: 'save', 'exit'");
+//            new Thread(() -> {
+//                while (true) {
+//                    try {
+//                        CommandManager commandManager = executor.getCommandManager();
+//                        String input = console.readln().trim();
+//                        if (input.equals("save")) {
+//                            commandManager.getCommands().get("save").apply(new Request(""));
+//                        } else if (input.equals("exit")) {
+//    //                        commandManager.getCommands().get("save").apply(new Request(""));
+//                            commandManager.getCommands().get("exit").apply(new Request(""));
+//                        } else {
+//                            logger.warn("Inserted command is not available for server. You are able to use this commands: 'save', 'exit'");
+////                            console.println("Inserted command is not available for server. You are able to use this commands: 'save', 'exit'");
+//                        }
+////                    } catch (IOException e) {
+////                        e.printStackTrace();
+//                    } catch (Exception e) {
+//                        throw new RuntimeException(e);
+//                    }
+//                }
+//            }).start();
+
+            BufferedReader consoleReader = new BufferedReader(new InputStreamReader(System.in));
+            while (true) {
+//                if (console.isCanReadln()) {
+                if (consoleReader.ready()) {
+                    CommandManager commandManager = executor.getCommandManager();
+
+//                    String input = console.readln().trim();
+                    String input = consoleReader.readLine().trim();
+//                        System.out.println(input);
+                    if (input.equals("save")) {
+                        commandManager.getCommands().get("save").apply(new Request(""));
+                    } else if (input.equals("exit")) {
+                        //                        commandManager.getCommands().get("save").apply(new Request(""));
+                        commandManager.getCommands().get("exit").apply(new Request(""));
+                    } else if (input.isEmpty()) {
+                        continue;
+                    } else {
+                        logger.warn("Inserted command is not available for server. You are able to use this commands: 'save', 'exit'");
+                        continue;
 //                            console.println("Inserted command is not available for server. You are able to use this commands: 'save', 'exit'");
-                        }
+                    }
 //                    } catch (IOException e) {
 //                        e.printStackTrace();
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
-                    }
                 }
-            }).start();
-            while (true) {
-                selector.select();
+
+                selector.select(5);
                 Iterator<SelectionKey> iterator = selector.selectedKeys().iterator();
                 while (iterator.hasNext()) {
+
                     SelectionKey key = iterator.next();
                     iterator.remove();
+//                    System.out.println(iterator.hasNext());
                     if (!key.isValid()) continue;
                     if (key.isAcceptable()) handleAccept(key);
                     else if (key.isReadable())
                         handleRead(key);
+//                    System.out.println(iterator.hasNext());
                 }
+
             }
+
         } catch (IOException e) {
 //            System.err.println("Error in server (while opening selector): " + e.getMessage());
             logger.error("Error in server (while opening selector): " + e.getMessage());

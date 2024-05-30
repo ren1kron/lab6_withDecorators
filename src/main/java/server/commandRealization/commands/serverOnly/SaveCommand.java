@@ -1,7 +1,7 @@
 package server.commandRealization.commands.serverOnly;
 
 
-import general.network.Request;
+import general.network.depricated.Request;
 import general.network.abstractions.RequestStatus;
 import server.commandRealization.Command;
 import server.commandRealization.interfaces.ServerCommand;

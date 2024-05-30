@@ -1,6 +1,7 @@
 package server.commandRealization.commands;
 
 
+//import general.network.depricated.Request;
 import general.network.Request;
 import general.network.abstractions.RequestStatus;
 import server.commandRealization.Command;
@@ -26,7 +27,8 @@ public class InfoCommand extends Command {
 //    public Response apply(String[] arguments) {
     public Request apply(Request request) {
 //        if (request.getKey().equals(null)) return new Response(false, "Wrong amount of arguments!\nYou suppose to write: '" + getName() + "'");
-        if (!request.getStatus().equals(RequestStatus.NORMAL)) return new Request("Wrong amount of arguments!\nYou suppose to write: '" + getName() + "'");
+//        if (!request.getStatus().equals(RequestStatus.NORMAL)) return new Request("Wrong amount of arguments!\nYou suppose to write: '" + getName() + "'");
+
 
         String initTime = (collectionManager.getLastInitTime() == null) ? "collection hasn't been initialized in this session yet" :
                 "Date: " + collectionManager.getLastInitTime().toLocalDate().toString() + " | Time: " + collectionManager.getLastInitTime().toLocalTime().toString();

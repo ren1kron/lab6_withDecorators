@@ -1,10 +1,9 @@
 package server.commandRealization.commands;
 
 
-import client.utility.Asker;
 import general.console.Console;
 import general.models.Worker;
-import general.network.Request;
+import general.network.depricated.Request;
 import general.network.abstractions.RequestStatus;
 import server.commandRealization.Command;
 import server.managers.CollectionManager;

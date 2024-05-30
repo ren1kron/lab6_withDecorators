@@ -4,6 +4,7 @@ import general.models.Worker;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -14,7 +15,7 @@ import java.util.stream.Collectors;
  * @author ren1kron
  */
 
-public class CollectionManager {
+public class CollectionManager implements Iterable<Worker> {
     private int currentId = 1;
     private Map<Integer, Worker> keyMap = new LinkedHashMap<>();
     private Map<Integer, Worker> idMap = new LinkedHashMap<>();
@@ -193,8 +194,38 @@ public class CollectionManager {
     }
 
 //    public void test() {
-//        for(Worker worker : new CollectionManager(null)) {
+//        for (Worker worker : new CollectionManager(null)) {
 //
 //        }
 //    }
+    public static void test(CollectionManager collectionManager) {
+        for (Worker worker : collectionManager) {
+//        for (Worker worker : this) {
+            System.out.println(worker);
+        }
+    }
+
+    @Override
+    public Iterator<Worker> iterator() {
+        return new WorkerIterator(keyMap);
+    }
+    private static class WorkerIterator implements Iterator<Worker> {
+//        private Iterator<Map.Entry<Integer, Worker>> iterator;
+        private Iterator<Worker> iterator;
+
+        public WorkerIterator(Map<Integer, Worker> keyMap) {
+            this.iterator = keyMap.values().iterator();
+        }
+
+        @Override
+        public boolean hasNext() {
+            return iterator.hasNext();
+        }
+
+        @Override
+        public Worker next() {
+            return iterator.next();
+        }
+
+    }
 }

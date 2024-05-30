@@ -1,6 +1,7 @@
 package server.commandRealization.commands;
 
 
+//import general.network.depricated.Request;
 import general.network.Request;
 import general.network.abstractions.RequestStatus;
 import server.commandRealization.Command;
@@ -24,7 +25,7 @@ public class ClearCommand extends Command {
      */
     @Override
     public Request apply(Request request) {
-        if (!request.getStatus().equals(RequestStatus.NORMAL)) return new Request("Wrong amount of arguments!\nYou suppose to write: '" + getName() + "'");
+//        if (!request.getStatus().equals(RequestStatus.NORMAL)) return new Request("Wrong amount of arguments!\nYou suppose to write: '" + getName() + "'");
 
         collectionManager.clear();
         return new Request("Collection was cleared!");

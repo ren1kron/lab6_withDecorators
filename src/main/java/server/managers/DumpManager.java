@@ -63,7 +63,8 @@ public class DumpManager {
                 worker.setName(line[2]); // name
                 worker.setOrganization(line[3].equals("null") ? null : new Organization(line[3])); // org
                 worker.setPosition(Position.valueOf(line[4])); // pos
-                worker.setStatus(Status.valueOf(line[5])); // status
+//                worker.setStatus(Status.valueOf(line[5])); // status
+                worker.setStatus(line[5].equals("null") ? null : Status.valueOf(line[5])); // status
                 worker.setSalary(Float.parseFloat(line[6])); // salary
                 worker.setCoordinates(new Coordinates(line[7])); // coords
                 Date creationDate;

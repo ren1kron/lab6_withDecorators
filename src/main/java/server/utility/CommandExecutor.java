@@ -1,7 +1,6 @@
 package server.utility;
 
-import general.console.Console;
-import general.network.Request;
+import general.network.depricated.Request;
 import server.commandRealization.Command;
 import server.managers.CommandManager;
 

@@ -2,7 +2,8 @@ package client.network;
 
 
 import general.console.Console;
-import general.network.Request;
+import general.network.abstractions.Sendable;
+import general.network.depricated.Request;
 
 import java.io.*;
 import java.net.InetSocketAddress;
@@ -49,70 +50,52 @@ public class TcpClientManager {
     }
     // TODO есть идея запихнуть инициализацию стримов и буфера в старт. А потом из остальных методов их вызывать.
     //  Может, так будет эффективнее, хз.
-    public void sendRequest(Request request) {
-        try {
-            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-            ObjectOutputStream outputStream = new ObjectOutputStream(byteArrayOutputStream);
-            outputStream.writeObject(request);
-//            outputStream.flush();
-            outputStream.close();
-            ByteBuffer buffer = ByteBuffer.wrap(byteArrayOutputStream.toByteArray());
-            while (buffer.hasRemaining()) {
-                client.write(buffer);
-//                client.read(buffer);
-            }
-            // Read the response back from the server
-            Request response = getAnswer();
-            console.println(response.getMessage());
-        } catch (IOException e) {
-            console.printError("Unable to connect to server. We will try to reconnect in 5 seconds...");
+//    public void sendRequest(Request request) {
+    public void sendRequest(Sendable request) {
+        boolean sendStatus = false;
+        boolean errorThrown = false;
+        do {
             try {
-                Thread.sleep(5000);
-                start();
+                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                ObjectOutputStream outputStream = new ObjectOutputStream(byteArrayOutputStream);
+                outputStream.writeObject(request);
+//            outputStream.flush();
+                outputStream.close();
+                ByteBuffer buffer = ByteBuffer.wrap(byteArrayOutputStream.toByteArray());
+                while (buffer.hasRemaining()) {
+                    client.write(buffer);
+//                client.read(buffer);
+                }
+                // Read the response back from the server
+                Request response = getAnswer();
+                // TODO здесь должна быть проверка на ошибку
+                console.println(response.getMessage());
+                sendStatus = true;
+            } catch (IOException e) {
+//                console.printError("Unable to connect to server. We will try to reconnect in 5 seconds...");
+                if (!errorThrown) {
+                    console.printError("Unable to connect to server. We will try to reconnect...");
+                    errorThrown = true;
+                }
+//                try {
+//                    Thread.sleep(5000);
+//                    start();
+                boolean reconnected = false;
+                try {
+                    while (!reconnected) {
+                        client = SocketChannel.open(address);
+                        client.configureBlocking(false);
+                        reconnected = true;
+                    }
+                } catch (IOException ignored) { }
 //                console.println("Try again");
 //                console.println("Connection restored!");
-                sendRequest(request);
-            } catch (InterruptedException ex) {
-                Thread.currentThread().interrupt();
+//                    sendRequest(request);
+//                } catch (InterruptedException ex) {
+//                    Thread.currentThread().interrupt();
+//                }
             }
-//            console.printError("Connection to the server was interrupted : " + e.getMessage());
-////            console.printError("The request to the server was not sent: " + e.getMessage());
-////            console.printError("Try to reconnect by writing 'reconnect' or write 'exit' " +
-////                    "if you want to shut down client'");
-////            // TODO далее ниже идёт не законченная костыльная реализация реконнекта. В целом, можно оставить так.
-////            //  Но, возможно, добавить нормальные команды и сделать нормальную реализацию внутри executor'а будет проще
-//////            console.printError("We will try to reconnect...");
-//            while (true) {
-//                console.prompt();
-//                String input = console.readln().trim();
-////                input.split()
-//                if (input.equals("exit")) {
-//                    console.println("Client disconnects...");
-//                    System.exit(1);
-//                }
-//                if (input.equals("reconnect")) {
-//                    try {
-//                        if (client != null && client.isOpen()) {
-//                            client.close();  // Закрываем предыдущий канал, если он открыт
-//                        }
-//                        client = SocketChannel.open();
-//                        client.connect(address);
-//                        client.configureBlocking(false);
-////                console.println("Успешное подключение к серверу.");
-//                        console.println("You reconnected to the server.");
-//                    } catch (IOException ex) {
-//                        console.printError("Server still isn't working.");
-//                        // В этом месте можно добавить задержку перед следующей попыткой переподключения, если нужно
-//                        try {
-//                            Thread.sleep(5000);  // Задержка в 5 секунд
-//                        } catch (InterruptedException exc) {
-////                    throw new RuntimeException(exc);
-//                            Thread.currentThread().interrupt();
-//                        }
-//                    }
-//                }
-//            }
-        }
+        } while (!sendStatus);
     }
 
     private Request getAnswer() throws IOException {

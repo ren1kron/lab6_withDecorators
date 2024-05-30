@@ -2,7 +2,7 @@ package client.utility;
 
 
 import general.console.Console;
-import general.exceptions.AskExitExecption;
+import general.exceptions.AskExitException;
 //import general.models.Coordinates;
 //import general.models.Position;
 //import general.models.Status;
@@ -21,7 +21,7 @@ import java.util.NoSuchElementException;
  * @author ren1kron
  */
 public class Asker {
-    public static Worker askWorker(Console console, Integer key, int id) throws AskExitExecption {
+    public static Worker askWorker(Console console, Integer key, int id) throws AskExitException {
         Worker worker;
         while (true) {
             try {
@@ -30,7 +30,7 @@ public class Asker {
                 do {
                     console.print("Enter the name of worker: ");
                     name = console.readln().trim();
-                    if (name.equals("exit")) throw new AskExitExecption();
+                    if (name.equals("exit")) throw new AskExitException();
                 } while (name.isEmpty());
                 //            do {
                 //                console.print("Enter the Full name of organization worker is associated with: ");
@@ -59,14 +59,14 @@ public class Asker {
         }
     }
 
-    public static Coordinates askCoordinates(Console console) throws AskExitExecption {
+    public static Coordinates askCoordinates(Console console) throws AskExitException {
         try {
             float x;
             while (true) {
                 console.print("Enter \"x\" coordinates: ");
                 var line = console.readln().trim();
                 line = line.replace("\\s", "");
-                if (line.equals("exit")) throw new AskExitExecption();
+                if (line.equals("exit")) throw new AskExitException();
                 if (!line.isEmpty()) {
                     try {
                         x = Float.parseFloat(line); // Максимальное значение поля: 145
@@ -82,7 +82,7 @@ public class Asker {
                 console.print("Enter \"y\" coordinates: ");
                 var line = console.readln().trim();
                 line = line.replace("\\s", "");
-                if (line.equals("exit")) throw new AskExitExecption();
+                if (line.equals("exit")) throw new AskExitException();
                 if (!line.isEmpty()) {
                     try {
                         y = Double.parseDouble(line);
@@ -99,14 +99,14 @@ public class Asker {
         }
     }
 
-    public static float askSalary(Console console) throws AskExitExecption {
+    public static float askSalary(Console console) throws AskExitException {
         try {
             while (true) {
                 try {
                     console.print("Enter the worker's salary (in USD): $");
                     var line = console.readln().trim();
                     line = line.replace("\\s", "");
-                    if (line.equals("exit")) throw new AskExitExecption();
+                    if (line.equals("exit")) throw new AskExitException();
                     if (!line.isEmpty()) {
                         var f = Float.parseFloat(line);
                         if (f > 0) return f;
@@ -122,14 +122,14 @@ public class Asker {
         }
     }
 
-    public static Position askPosition(Console console) throws AskExitExecption {
+    public static Position askPosition(Console console) throws AskExitException {
         try {
             while (true) {
                 try {
                     console.print("Enter the position (" + Position.names().toLowerCase() + ") of Worker: ");
 
                     var line = console.readln().trim();
-                    if (line.equals("exit")) throw new AskExitExecption();
+                    if (line.equals("exit")) throw new AskExitException();
                     if (!line.isEmpty()) {
                         return Position.valueOf(line.toUpperCase());
                     }
@@ -143,13 +143,13 @@ public class Asker {
         }
     }
 
-    public static LocalDate askStartDate(Console console) throws AskExitExecption {
+    public static LocalDate askStartDate(Console console) throws AskExitException {
         try {
             while (true) {
                 console.print("Enter Worker's Birthday in the following format: YYYY-MM-DD or " +
                         LocalDate.now().format(DateTimeFormatter.ISO_DATE) + " : ");
                 var line = console.readln().trim();
-                if (line.equals("exit")) throw new AskExitExecption();
+                if (line.equals("exit")) throw new AskExitException();
                 if (!line.isEmpty()) {
                     try {
                         return LocalDate.parse(line, DateTimeFormatter.ISO_DATE);
@@ -164,14 +164,15 @@ public class Asker {
         }
     }
 
-    public static Status askStatus(Console console) throws AskExitExecption {
+    public static Status askStatus(Console console) throws AskExitException {
         try {
             while (true) {
                 console.print("Enter the Status of the Worker (" + Status.names().toLowerCase() + "): ");
                 var line = console.readln().trim();
-                if (line.equals("exit")) throw new AskExitExecption();
-//                if (line.isEmpty()) return null;
-                else if (!line.isEmpty()) {
+                if (line.equals("exit")) throw new AskExitException();
+                else if (line.isEmpty()) return null;
+//                else if (!line.isEmpty()) {
+                else {
                     try {
                         return Status.valueOf(line.toUpperCase());
                     } catch (NullPointerException | IllegalArgumentException e) {
@@ -195,7 +196,7 @@ public class Asker {
 //            }
 //        }
 //    }
-    public static Organization askOrganization(Console console) throws AskExitExecption {
+    public static Organization askOrganization(Console console) throws AskExitException {
 //    private String fullName; //Поле не может быть null
 //    private Integer annualTurnover; //Поле МОЖЕТ быть null, Значение поля должно быть больше 0
 //    private int employeesCount; //Значение поля должно быть больше 0
@@ -204,7 +205,7 @@ public class Asker {
             console.print("Enter the Full name of Organization worker is associated with (ENTER if " +
                     "organization is unknown): ");
             organizationName = console.readln().trim();
-            if (organizationName.equals("exit")) throw new AskExitExecption();
+            if (organizationName.equals("exit")) throw new AskExitException();
             if (organizationName.isEmpty()) return null;
 
             int employeesCount;
@@ -212,7 +213,7 @@ public class Asker {
                 console.print("Enter the Employees count of the Organization worker associated with: ");
                 var line = console.readln().trim();
                 line = line.replace("\\s", "");
-                if (line.equals("exit")) throw new AskExitExecption();
+                if (line.equals("exit")) throw new AskExitException();
 //            else if (line.isEmpty()) return new Organization(organizationName, null);
                 if (!line.isEmpty()) {
                     try {
@@ -232,7 +233,7 @@ public class Asker {
                         "annual turnover of organization is unknown): $");
                 var line = console.readln().trim();
                 line = line.replace("\\s", "");
-                if (line.equals("exit")) throw new AskExitExecption();
+                if (line.equals("exit")) throw new AskExitException();
 //            else if (line.isEmpty()) return new Organization(organizationName, null);
                 else if (line.isEmpty()) return new Organization(organizationName, null, employeesCount);
                 else {
@@ -255,14 +256,14 @@ public class Asker {
 //        else if (organizationName)
     }
 //    @Deprecated
-    public static Integer askKey(Console console) throws AskExitExecption{
+    public static Integer askKey(Console console) throws AskExitException {
 //        Integer key;
         try {
             while (true) {
                 console.print("Enter the Key of Worker (it must be an integer): ");
                 var line = console.readln().trim();
                 line = line.replace("\\s","");
-                if (line.equals("exit")) throw new AskExitExecption();
+                if (line.equals("exit")) throw new AskExitException();
                 else if (!line.isEmpty()) {
                     try {
                         return Integer.parseInt(line);

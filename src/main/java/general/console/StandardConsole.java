@@ -9,6 +9,8 @@ import java.util.Scanner;
  */
 public class StandardConsole implements Console {
     private static final String P1 = "$ ";
+    public static final String ANSI_RED = "\u001B[31m";
+    public static final String ANSI_RESET = "\u001B[0m";
     private static Scanner fileScanner = null;
     private static Scanner defScanner = new Scanner(System.in);
 
@@ -24,7 +26,8 @@ public class StandardConsole implements Console {
 
     @Override
     public void printError(Object obj) {
-        System.err.println("Error: " + obj);
+//        System.err.println("Error: " + obj);
+        System.out.println(ANSI_RED + "Error: " + obj + ANSI_RESET);
     }
 
     @Override
@@ -34,7 +37,7 @@ public class StandardConsole implements Console {
 
     @Override
     public boolean isCanReadln() {
-        return(fileScanner!=null?fileScanner:defScanner).hasNextLine();
+        return(fileScanner != null ? fileScanner : defScanner).hasNextLine();
     }
 
     @Override
