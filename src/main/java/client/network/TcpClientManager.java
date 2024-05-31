@@ -3,7 +3,6 @@ package client.network;
 
 import general.console.Console;
 import general.network.abstractions.Sendable;
-import general.network.Request;
 //import general.network.deprecated.Request;
 import general.network.requestDecorators.Response;
 
@@ -71,7 +70,10 @@ public class TcpClientManager {
                 // Read the response back from the server
                 Response response = getAnswer();
                 // TODO здесь должна быть проверка на ошибку
-                console.println(response.message());
+                if (response == null) continue;
+                else if (!response.isSuccessful()) console.printError(response.message());
+                else console.println(response.message());
+
 //                if (response != null) console.println(response.message());
 //                else throw new IOException();
                 sendStatus = true;

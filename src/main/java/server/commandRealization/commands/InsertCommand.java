@@ -15,6 +15,8 @@ import general.network.requestDecorators.abstractions.SendableDecorator;
 import server.commandRealization.Command;
 import server.managers.CollectionManager;
 
+import java.util.NoSuchElementException;
+
 /**
  * Command 'insert key {element}'. Adds to collection new worker with inserted key
  * @author ren1kron
@@ -43,25 +45,33 @@ public class InsertCommand extends Command {
         ElementRequest elementRequest = (ElementRequest) request;
         Element element = elementRequest.element();
 
-        KeyRequest keyRequest = (KeyRequest) request1;
-        int key = keyRequest.key();
+//        KeyRequest keyRequest = (KeyRequest) request1;
+//        int key = keyRequest.key();
+//        int key;
+        try {
+            int key = elementRequest.key();
 
 
-        if (!(key > 0)) return new Response(false, new Request("Not valid or empty key"));
-        if (element == null) return new Response(false, new Request("Empty element"));
+            if (!(key > 0)) return new Response(false, new Request("Not valid or empty key"));
+            if (element == null) return new Response(false, new Request("Empty element"));
 
-        Worker worker = (Worker) element;
+            Worker worker = (Worker) element;
 //        int key = request.getKey();
-        if (collectionManager.byKey(key) != null) return new Response(false, new Request("Worker with specified key already exist!"));
+            if (collectionManager.byKey(key) != null)
+                return new Response(false, new Request("Worker with specified key already exist!"));
 //        Worker worker = (Worker) request.getElement();
 //        if (worker != null) worker.setId(collectionManager.getFreeId());
-        worker.setId(collectionManager.getFreeId());
-        worker.setKey(key);
-        if (!worker.validate()) return new Response(false, new Request("Fields of inserted worker are invalid. Worker wasn't added to collection"));
+            worker.setId(collectionManager.getFreeId());
+            worker.setKey(key);
+            if (!worker.validate())
+                return new Response(false, new Request("Fields of inserted worker are invalid. Worker wasn't added to collection"));
 //        if (worker != null && worker.validate()) {
-        else {
-            collectionManager.add(worker);
-            return new Response(new Request("Worker was successfully added to collection!"));
+            else {
+                collectionManager.add(worker);
+                return new Response(new Request("Worker was successfully added to collection!"));
+            }
+        } catch (NoSuchElementException e) {
+            return new Response(false, new Request("The request received from the client is incorrect. There is no key in it!"));
         }
     }
 }

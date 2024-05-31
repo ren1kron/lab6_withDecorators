@@ -26,7 +26,7 @@ public class Response extends SendableDecorator {
 //        return request.message();
 //    }
 
-    public boolean isError() {
+    public boolean isSuccessful() {
         return status;
     }
 }

@@ -51,10 +51,26 @@ public class Requester {
                 System.exit(1);
             }
 
-            if (userInput.length > 2 || ((!key_commands.contains(userInput[0]) && !userInput[0].equals("execute_script")) & userInput.length > 1)) {
-                console.printError("Wrong amount of arguments! Write 'help' for help");
+//            if (userInput.length > 2 ||
+//                    ((!key_commands.contains(userInput[0]) && !userInput[0].equals("execute_script")) ||
+//                            & userInput.length > 1)) {
+//                console.printError("Wrong amount of arguments! Write 'help' for help");
+////                console.prompt();
+//                continue;
+//            }
+            if (key_commands.contains(userInput[0]) || userInput[0].equals("execute_script")) {
+//                    ((key_commands.contains(userInput[0]) || userInput[0].equals("execute_script")) & userInput.length > 2)) {
+                if (userInput.length != 2) {
+                    console.printError("Wrong amount of arguments! Write 'help' for help");
 //                console.prompt();
-                continue;
+                    continue;
+                }
+            } else {
+                if (userInput.length > 1) {
+                    console.printError("Wrong amount of arguments! Write 'help' for help");
+//                console.prompt();
+                    continue;
+                }
             }
             executeCommand(userInput);
 

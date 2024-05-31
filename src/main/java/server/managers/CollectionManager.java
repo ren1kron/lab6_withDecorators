@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 public class CollectionManager implements Iterable<Worker> {
     private int currentId = 1;
     private Map<Integer, Worker> keyMap = new LinkedHashMap<>();
-    private Map<Integer, Worker> idMap = new LinkedHashMap<>();
+//    private Map<Integer, Worker> idMap = new LinkedHashMap<>();
 //    private Map<Organization, Map<Integer, Worker>> OrganizationMap = new LinkedHashMap<>();
 //    private Set<Organization> organizations = new HashSet<>();
     private LocalDateTime lastInitTime;
@@ -42,7 +42,11 @@ public class CollectionManager implements Iterable<Worker> {
      * @return Worker by their id
      */
     public Worker byId(int id) {
-        return idMap.get(id);
+//        return idMap.get(id);
+        for (Worker worker : this) {
+            if (worker.getId() == id) return worker;
+        }
+        return null;
     }
 
     /**
@@ -52,10 +56,10 @@ public class CollectionManager implements Iterable<Worker> {
         return keyMap.get(key);
     }
 
-    @Deprecated
-    public int maxId() {
-        return Collections.max(idMap.keySet());
-    }
+//    @Deprecated
+//    public int maxId() {
+//        return Collections.max(idMap.keySet());
+//    }
 
 
     /**
@@ -79,7 +83,7 @@ public class CollectionManager implements Iterable<Worker> {
      */
     public void clear() {
         keyMap.clear();
-        idMap.clear();
+//        idMap.clear();
     }
 
     /**
@@ -90,7 +94,7 @@ public class CollectionManager implements Iterable<Worker> {
 //        id = max(collection.keySet()) + 1;
         if (isContain(worker)) return false;
         keyMap.put(worker.getKey(), worker);
-        idMap.put(worker.getId(), worker);
+//        idMap.put(worker.getId(), worker);
         update();
         return true;
 //        organizations.add(worker.getOrganization());
@@ -107,7 +111,7 @@ public class CollectionManager implements Iterable<Worker> {
         var worker = byKey(key);
         if (worker == null) return false;
         keyMap.remove(key);
-        idMap.remove(worker.getId());
+//        idMap.remove(worker.getId());
         update();
         return true;
     }
@@ -142,19 +146,22 @@ public class CollectionManager implements Iterable<Worker> {
      * @return true if collection was downloaded successfully
      */
     public boolean init() {
-        idMap.clear();
+//        idMap.clear();
         keyMap.clear();
         dumpManager.readCsv(keyMap);
         lastInitTime = LocalDateTime.now();
-        for (var e : keyMap.values()) {
-            if (byId(e.getId()) != null) {
+        for (Worker worker : keyMap.values()) {
+//            if (byId(e.getId()) != null) {
+            if (!worker.validate()) {
                 keyMap.clear();
-                idMap.clear();
+//                idMap.clear();
 //                throw new RuntimeException();
                 return false;
-            } else {
-                idMap.put(e.getId(), e);
             }
+//            else {
+////                idMap.put(e.getId(), e);
+//                keyMap.put(e.getKey(), e);
+//            }
         }
         update();
         return true;

@@ -5,6 +5,8 @@ import general.network.Request;
 import general.network.abstractions.Sendable;
 import general.network.requestDecorators.abstractions.SendableDecorator;
 
+import java.util.NoSuchElementException;
+
 public class ElementRequest extends SendableDecorator {
     private static final long serialVersionUID = 1004L;
 //    private Request request;
@@ -26,9 +28,13 @@ public class ElementRequest extends SendableDecorator {
     public Element element() {
         return element;
     }
-//    public int key() {
-//        if (sendable)
-//    }
+    public int key() {
+        if (sendable instanceof KeyRequest) {
+            return ((KeyRequest) sendable).key();
+        }
+//        return 0;
+        throw new NoSuchElementException();
+    }
 //    private Request request;
 //    private final Element element;
 //
