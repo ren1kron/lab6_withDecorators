@@ -1,7 +1,10 @@
 package server.network;
 
 import general.console.Console;
-import general.network.depricated.Request;
+//import general.network.depricated.Request;
+import general.network.Request;
+import general.network.abstractions.Sendable;
+import general.network.requestDecorators.Response;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import server.commandRealization.interfaces.ServerCommand;
@@ -138,14 +141,16 @@ public class TcpServerManager {
             }
             buffer.flip();
             ObjectInputStream objectInputStream = new ObjectInputStream(new ByteArrayInputStream(buffer.array()));
-            Request request = (Request) objectInputStream.readObject();
-            Request execute;
+            Sendable request = (Sendable) objectInputStream.readObject();
+            Response execute;
             // if command is for server only, we send back request with error
-            if (executor.getCommandManager().getCommands().get(request.getMessage()) instanceof ServerCommand) {
-//                System.out.println(execute.getMessage());
-                execute = new Request("You don't have permissions to use this command.");
-            } else execute = this.executor.execute(request);
+//            if (executor.getCommandManager().getCommands().get(request.message()) instanceof ServerCommand) {
+////                System.out.println(execute.getMessage());
+//                execute = new Response(false, new Request("You don't have permissions to use this command."));
+//            } else execute = this.executor.execute(request);
 
+            execute = this.executor.execute(request);
+//            System.out.println(execute.message());
             // Echo the request back to client
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             ObjectOutputStream outputStream = new ObjectOutputStream(byteArrayOutputStream);

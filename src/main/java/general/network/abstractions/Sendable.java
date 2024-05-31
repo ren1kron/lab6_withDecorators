@@ -1,5 +1,7 @@
 package general.network.abstractions;
 
-public interface Sendable {
+import java.io.Serializable;
+
+public interface Sendable extends Serializable {
     String message();
 }

@@ -1,8 +1,11 @@
 package server.commandRealization.commands;
 
 
-import general.network.depricated.Request;
+//import general.network.deprecated.Request;
+import general.network.Request;
 import general.network.abstractions.RequestStatus;
+import general.network.abstractions.Sendable;
+import general.network.requestDecorators.Response;
 import server.commandRealization.Command;
 import server.managers.CollectionManager;
 
@@ -23,9 +26,9 @@ public class ShowCommand extends Command {
      * @return Command status
      */
     @Override
-    public Request apply(Request request) {
-        if (!request.getStatus().equals(RequestStatus.NORMAL)) return new Request("Wrong amount of arguments!\nYou suppose to write: '" + getName() + "'");
+    public Response apply(Sendable request) {
+//        if (!request.getStatus().equals(RequestStatus.NORMAL)) return new Request("Wrong amount of arguments!\nYou suppose to write: '" + getName() + "'");
 
-        return new Request(collectionManager.toString());
+        return new Response(new Request(collectionManager.toString()));
     }
 }

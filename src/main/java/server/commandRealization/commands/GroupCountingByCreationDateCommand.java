@@ -2,8 +2,10 @@ package server.commandRealization.commands;
 
 
 import general.models.Worker;
-import general.network.depricated.Request;
-import general.network.abstractions.RequestStatus;
+//import general.network.deprecated.Request;
+import general.network.Request;
+import general.network.abstractions.Sendable;
+import general.network.requestDecorators.Response;
 import server.commandRealization.Command;
 import server.managers.CollectionManager;
 
@@ -29,8 +31,8 @@ public class GroupCountingByCreationDateCommand extends Command {
      * @return Command status
      */
     @Override
-    public Request apply(Request request) {
-        if (!request.getStatus().equals(RequestStatus.NORMAL)) return new Request("Wrong amount of arguments!\nYou suppose to write: '" + getName() + "'");
+    public Response apply(Sendable request) {
+//        if (!request.getStatus().equals(RequestStatus.NORMAL)) return new Request("Wrong amount of arguments!\nYou suppose to write: '" + getName() + "'");
 
         Map<Integer, List<Worker>> workersPerMonth = collectionManager.getKeyMap().values().stream().collect(Collectors.groupingBy(Worker::getMonth));
 
@@ -55,6 +57,7 @@ public class GroupCountingByCreationDateCommand extends Command {
             stringBuilder.append("––––––––––––––––––––––––––––––––––––––––––––––––––––")
                     .append("\n");
         }
-        return new Request(stringBuilder.toString());
+        return new Response(new Request(stringBuilder.toString()));
     }
+    // TODO подумать, возможно, есть более удачная реализация. У меня по прежнему нет проверок на запись лишних символов в команды в одну строчку
 }

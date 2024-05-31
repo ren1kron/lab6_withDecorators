@@ -51,7 +51,7 @@ public class Requester {
                 System.exit(1);
             }
 
-            if (userInput.length > 2) {
+            if (userInput.length > 2 || ((!key_commands.contains(userInput[0]) && !userInput[0].equals("execute_script")) & userInput.length > 1)) {
                 console.printError("Wrong amount of arguments! Write 'help' for help");
 //                console.prompt();
                 continue;
@@ -63,28 +63,43 @@ public class Requester {
     private void executeCommand(String[] userCommand) {
         try {
 //            Request request;
-            Sendable request = null;
             String command = userCommand[0];
 //            if (command.equals("execute_script") && userCommand.length == 1) console.printError("Wrong amount of arguments! You suppose to write 'execute_script file_name'");
-            Request request_build = new Request(command);
+            Sendable request = new Request(command);
+//            Request request_build = new Request(command);
+            if (command.equals("execute_script")) {
+                if (!userCommand[1].isEmpty()) scriptMode(userCommand[1]);
+                else {
+                    console.printError("Wrong amount of arguments! You suppose to write 'execute_script file_name'");
+                    return;
+                }
+            }
 //            if (command.endsWith("_position")) {
             if (key_commands.contains(command)) {
                 int key = Integer.parseInt(userCommand[1]);
-                request = new KeyRequest(request_build, key);
+                request = new KeyRequest(request, key);
             }
             if (position_commands.contains(command)) {
                 Position position = Asker.askPosition(console);
-                request = new PositionRequest(request_build, position);
+//                if (request == null) request = new PositionRequest(request, position);
+//                else request = new PositionRequest(request, position);
+                request = new PositionRequest(request, position);
             }
 //            if (id_commands.contains(command)) {
 //                int id = Integer.parseInt(userCommand[1]);
 //                request = new KeyRequest(request_build, id);
 //            }
             if (element_commands.contains(command)) {
-                Worker worker = Asker.askWorker(console, 0, 0);
-                request = new ElementRequest(request_build, worker);
+                Worker worker = key_commands.contains(command) ? Asker.askWorker(console, 0, 0) : Asker.askWorker(console, Asker.askKey(console), 0);
+//                if (key_commands.contains(command)) {
+//                    worker = Asker.askWorker(console, 0, 0);
+//                } else
+                request = new ElementRequest(request, worker);
             }
+//            System.out.println(request.message());
+//            if (request != null) client.sendRequest(request);
             client.sendRequest(request);
+//            else client.sendRequest(request_build);
 
 
 

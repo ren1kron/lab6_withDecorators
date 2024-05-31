@@ -3,7 +3,9 @@ package client.network;
 
 import general.console.Console;
 import general.network.abstractions.Sendable;
-import general.network.depricated.Request;
+import general.network.Request;
+//import general.network.deprecated.Request;
+import general.network.requestDecorators.Response;
 
 import java.io.*;
 import java.net.InetSocketAddress;
@@ -67,9 +69,11 @@ public class TcpClientManager {
 //                client.read(buffer);
                 }
                 // Read the response back from the server
-                Request response = getAnswer();
+                Response response = getAnswer();
                 // TODO здесь должна быть проверка на ошибку
-                console.println(response.getMessage());
+                console.println(response.message());
+//                if (response != null) console.println(response.message());
+//                else throw new IOException();
                 sendStatus = true;
             } catch (IOException e) {
 //                console.printError("Unable to connect to server. We will try to reconnect in 5 seconds...");
@@ -98,7 +102,7 @@ public class TcpClientManager {
         } while (!sendStatus);
     }
 
-    private Request getAnswer() throws IOException {
+    private Response getAnswer() throws IOException {
         Selector selector = Selector.open();
         client.register(selector, client.validOps());
         ByteBuffer buffer = ByteBuffer.allocate(1024);
@@ -129,13 +133,14 @@ public class TcpClientManager {
             byte[] responseBytes = byteArrayOutputStream.toByteArray();
             if (responseBytes.length > 0) {
                 try (ObjectInputStream oi = new ObjectInputStream(new ByteArrayInputStream(responseBytes))) {
-                    Request response = (Request) oi.readObject();
+                    Response response = (Response) oi.readObject();
                     return response;
                 } catch (EOFException | StreamCorruptedException ignored) {
                     // Error while deserializing object. Maybe, some data wasn't gotten
                     // Continue reading data...
                 } catch (ClassNotFoundException e) {
-                    System.err.println("Error while reading object :" + e.getMessage());
+//                    System.err.println("Error while reading object :" + e.getMessage());
+                    console.printError("Error while reading object :" + e.getMessage());
                 }
             }
         }

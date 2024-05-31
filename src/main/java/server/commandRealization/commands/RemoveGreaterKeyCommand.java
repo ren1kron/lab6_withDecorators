@@ -2,8 +2,12 @@ package server.commandRealization.commands;
 
 
 import general.console.Console;
-import general.network.depricated.Request;
+import general.network.abstractions.Sendable;
+//import general.network.deprecated.Request;
+import general.network.Request;
 import general.network.abstractions.RequestStatus;
+import general.network.requestDecorators.KeyRequest;
+import general.network.requestDecorators.Response;
 import server.commandRealization.Command;
 import server.managers.CollectionManager;
 
@@ -25,12 +29,13 @@ public class RemoveGreaterKeyCommand extends Command {
      * @return Command status
      */
     @Override
-    public Request apply(Request request) {
-        if (!request.getStatus().equals(RequestStatus.KEY_COMMAND))
-            return new Request("Wrong amount of arguments!\nYou suppose to write: '" + getName() + "'");
+    public Response apply(Sendable request) {
+//        if (!request.getStatus().equals(RequestStatus.KEY_COMMAND))
+//            return new Request("Wrong amount of arguments!\nYou suppose to write: '" + getName() + "'");
 
 //        int key = Integer.parseInt(arguments[1].trim());
-        int key = request.getKey();
+        KeyRequest keyRequest = (KeyRequest) request;
+        int key = keyRequest.key();
 
         // IDE recommended way
         collectionManager.getKeyMap().keySet().removeIf(integer -> key < integer);
@@ -45,6 +50,6 @@ public class RemoveGreaterKeyCommand extends Command {
 //                if (key < e) list.add(e);
 //            }
 //            for (Integer i : list) collectionManager.removeByKey(i);
-        return new Request("All elements with key greater than specified one has been successfully removed from collection!");
+        return new Response(new Request("All elements with key greater than specified one has been successfully removed from collection!"));
     }
 }

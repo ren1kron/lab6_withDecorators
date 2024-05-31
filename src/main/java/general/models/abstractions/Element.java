@@ -1,5 +1,8 @@
 package general.models.abstractions;
 
-public abstract class Element implements Validatable, Comparable<Element>{
+import java.io.Serializable;
+
+public abstract class Element implements Serializable, Validatable, Comparable<Element>{
+    private static final long serialVersionUID = 11234L;
     abstract public int getId();
 }

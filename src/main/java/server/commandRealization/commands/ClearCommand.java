@@ -3,7 +3,8 @@ package server.commandRealization.commands;
 
 //import general.network.depricated.Request;
 import general.network.Request;
-import general.network.abstractions.RequestStatus;
+import general.network.abstractions.Sendable;
+import general.network.requestDecorators.Response;
 import server.commandRealization.Command;
 import server.managers.CollectionManager;
 
@@ -20,14 +21,14 @@ public class ClearCommand extends Command {
 
     /**
      * Applies command
+     *
      * @param request Arguments for applying command
      * @return Command status
      */
     @Override
-    public Request apply(Request request) {
+    public Response apply(Sendable request) {
 //        if (!request.getStatus().equals(RequestStatus.NORMAL)) return new Request("Wrong amount of arguments!\nYou suppose to write: '" + getName() + "'");
-
         collectionManager.clear();
-        return new Request("Collection was cleared!");
+        return new Response(new Request("Collection was cleared!"));
     }
 }

@@ -2,7 +2,9 @@ package server.commandRealization.commands.serverOnly;
 
 
 import general.console.Console;
-import general.network.depricated.Request;
+import general.network.abstractions.Sendable;
+//import general.network.deprecated.Request;
+import general.network.requestDecorators.Response;
 import server.commandRealization.Command;
 import server.commandRealization.interfaces.ServerCommand;
 
@@ -15,7 +17,7 @@ public class ExitCommand extends Command implements ServerCommand {
     public ExitCommand(Console console) {
         // TODO повторение истории из save
 //        super("exit", "Closes the application without saving the collection to csv-file");
-        super("exit", "Disconnects client");
+        super("exit", "If you client - disconnects you from server. If you server - closes server without saving collection.");
         this.console = console;
     }
 
@@ -26,7 +28,7 @@ public class ExitCommand extends Command implements ServerCommand {
      */
 
     @Override
-    public Request apply(Request request) {
+    public Response apply(Sendable request) {
 //        try {
 //            Thread.sleep(1000);
 //        } catch (InterruptedException e) {

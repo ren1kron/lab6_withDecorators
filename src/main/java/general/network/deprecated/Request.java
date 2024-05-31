@@ -1,4 +1,4 @@
-package general.network.depricated;
+package general.network.deprecated;
 
 import general.models.Position;
 import general.models.abstractions.Element;

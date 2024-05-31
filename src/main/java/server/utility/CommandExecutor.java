@@ -1,6 +1,9 @@
 package server.utility;
 
-import general.network.depricated.Request;
+//import general.network.deprecated.Request;
+import general.network.Request;
+import general.network.abstractions.Sendable;
+import general.network.requestDecorators.Response;
 import server.commandRealization.Command;
 import server.managers.CommandManager;
 
@@ -30,10 +33,11 @@ public class CommandExecutor implements Executor{
 //    }
 
     @Override
-    public Request execute(Request request) {
-        Command command = commandManager.getCommands().get(request.getMessage());
+    public Response execute(Sendable request) {
+//        Command command = commandManager.getCommands().get(request.getMessage());
+        Command command = commandManager.getCommands().get(request.message());
 
-        if (command == null) return new Request("Inserted command is not exist or you do not have permission to use it");
+        if (command == null) return new Response(false, new Request("Inserted command is not exist or you do not have permission to use it"));
         return command.apply(request);
     }
 

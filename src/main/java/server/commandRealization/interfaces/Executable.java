@@ -1,7 +1,8 @@
 package server.commandRealization.interfaces;
 
 //import general.network.depricated.Request;
-import general.network.Request;
+import general.network.abstractions.Sendable;
+import general.network.requestDecorators.Response;
 
 /**
  * All executable commands implement this interface
@@ -10,8 +11,9 @@ import general.network.Request;
 public interface Executable {
     /**
      * Apply command
+     *
      * @param arguments Arguments for applying command
      * @return result of executing command
      */
-    Request apply(Request request);
+    Response apply(Sendable request);
 }

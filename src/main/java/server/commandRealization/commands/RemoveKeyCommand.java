@@ -1,13 +1,17 @@
 package server.commandRealization.commands;
 
 
-import general.network.depricated.Request;
+import general.network.abstractions.Sendable;
+//import general.network.deprecated.Request;
+import general.network.Request;
 import general.network.abstractions.RequestStatus;
+import general.network.requestDecorators.KeyRequest;
+import general.network.requestDecorators.Response;
 import server.commandRealization.Command;
 import server.managers.CollectionManager;
 
 /**
- * Command 'remove_key'. Removes element from collection by its key.
+ * Command 'remove_key key'. Removes element from collection by its key.
  * @author ren1kron
  */
 public class RemoveKeyCommand extends Command {
@@ -23,14 +27,16 @@ public class RemoveKeyCommand extends Command {
      * @return Command status
      */
     @Override
-    public Request apply(Request request) {
-        if (!request.getStatus().equals(RequestStatus.KEY_COMMAND))
-            return new Request("Wrong amount of arguments!\nYou suppose to write: '" + getName() + "'");
+    public Response apply(Sendable request) {
+//        if (!request.getStatus().equals(RequestStatus.KEY_COMMAND))
+//            return new Request("Wrong amount of arguments!\nYou suppose to write: '" + getName() + "'");
 
-        int key = request.getKey();
-        collectionManager.removeByKey(key);
+        KeyRequest keyRequest = (KeyRequest) request;
+        int key = keyRequest.key();
 
+        System.out.println(key);
 
-        return new Request("Element was successfully deleted!");
+        if (collectionManager.removeByKey(key)) return new Response(new Request("Element was successfully deleted!"));
+        else return new Response(false, new Request("Element with selected key is not exist"));
     }
 }
